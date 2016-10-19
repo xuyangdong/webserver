@@ -6,7 +6,7 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 router.post('/',function(req,res){
-
+  console.log("ppupup")
   res.send({
     header:{
       'content-type':req.get("content-type")

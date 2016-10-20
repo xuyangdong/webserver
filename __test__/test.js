@@ -41,8 +41,46 @@ describe('文件上传测试', function() {
       formData:formData
     },function(e,r,b){
       console.log("-->",b)
-      // var info = JSON.parse(b)
+      var info = JSON.parse(b)
+      expect(info.id).to.be.equal('1')
       done()
     })
   });
 });
+
+describe('中间件测试',function(){
+  it('请求的响应为,success',function(done){
+    request.get('http://localhost:3000/test',function(e,r,b){
+      if(e){
+        done(e)
+      }else{
+        expect(b).to.be.equal('success')
+        done()
+      }
+    })
+  })
+})
+
+describe('multipart测试,',function(){
+  it('请求的响应为,success',function(done){
+    request.post({
+      url:'http://localhost:3000/multipart',
+      preambleCRLF: true,
+      postambleCRLF: true,
+      multipart:[
+        {
+          'content-type': 'application/json',
+          body: JSON.stringify({foo: 'bar', _attachments: {'message.txt': {follows: true, length: 18, 'content_type': 'text/plain' }}})
+        },
+        { body: 'I am an attachment' }
+      ]
+    },function(e,r,b){
+      if(e){
+        done(e)
+      }else{
+        expect(b).to.be.equal('success_multipart')
+        done()
+      }
+    })
+  })
+})

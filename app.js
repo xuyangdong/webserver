@@ -4,14 +4,16 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var xmlBodyParser = require('./middleware/xmlBodyParser')//自己实现的解析xml请求的中间件
+var multipartParser = require('connect-multiparty')
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
+var tests = require('./routes/test')
 // var upload = require('./routes/upload');
 // var xml = require('./routes/xmlrouter');
 
-var xmlBodyParser = require('./middleware/xmlBodyParser')//自己实现的解析xml请求的中间件
-var multipartParser = require('connect-multiparty')
+
 
 var app = express();
 
@@ -40,7 +42,23 @@ app.use('/xml',function(req,res,next){
 
 app.use('/upload',function(req,res,next){
   console.log("upload",req.files,req.body)
+  res.set({
+    'Access-Control-Allow-Origin':'*'
+  })
   res.send(req.body)
+})
+
+app.use('/test',function(req,res,next){
+  console.log("test middleware")
+  next();
+  return
+},tests)
+
+app.use('/multipart',function(req,res,next){
+  console.log("multipart")
+  console.log(req.body)
+  console.log(req.get('content-type'))
+  res.send('success_multipart')
 })
 
 // catch 404 and forward to error handler
